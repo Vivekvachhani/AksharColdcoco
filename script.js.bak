@@ -1,0 +1,63 @@
+document.querySelector('.menu-toggle')?.addEventListener('click', () => {
+  document.querySelector('.nav-links')?.classList.toggle('open');
+});
+
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', () => document.querySelector('.nav-links')?.classList.remove('open'));
+});
+
+function sendWholesale(e){
+  e.preventDefault();
+  const shop = encodeURIComponent(document.getElementById('shopName').value);
+  const loc = encodeURIComponent(document.getElementById('location').value);
+  const phone = encodeURIComponent(document.getElementById('phone').value);
+  const qty = encodeURIComponent(document.getElementById('quantity').value);
+  const msg = `Hi Akshar's Cold Coco, I want wholesale supply.%0A%0AShop Name: ${shop}%0ALocation: ${loc}%0APhone: ${phone}%0AQuantity Needed: ${qty}`;
+  window.open(`https://wa.me/447570761611?text=${msg}`, '_blank');
+}
+
+
+// Premium order popup
+const orderModal = document.getElementById('orderModal');
+const orderQty = document.getElementById('orderQty');
+const orderTotal = document.getElementById('orderTotal');
+const PRODUCT_PRICE = 7;
+function updateOrderTotal(){
+  if(!orderQty || !orderTotal) return;
+  let qty = parseInt(orderQty.value || '1', 10);
+  if(isNaN(qty) || qty < 1) qty = 1;
+  orderQty.value = qty;
+  orderTotal.textContent = `£${(qty * PRODUCT_PRICE).toFixed(2)}`;
+}
+function openOrderModal(){
+  orderModal?.classList.add('open');
+  orderModal?.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('customerName')?.focus(), 80);
+  updateOrderTotal();
+}
+function closeOrderModal(){
+  orderModal?.classList.remove('open');
+  orderModal?.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+document.querySelectorAll('.order-trigger').forEach(btn => btn.addEventListener('click', openOrderModal));
+document.querySelectorAll('[data-close-order]').forEach(el => el.addEventListener('click', closeOrderModal));
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeOrderModal(); });
+document.getElementById('qtyMinus')?.addEventListener('click', () => { orderQty.value = Math.max(1, parseInt(orderQty.value || '1', 10) - 1); updateOrderTotal(); });
+document.getElementById('qtyPlus')?.addEventListener('click', () => { orderQty.value = parseInt(orderQty.value || '1', 10) + 1; updateOrderTotal(); });
+orderQty?.addEventListener('input', updateOrderTotal);
+document.getElementById('orderForm')?.addEventListener('submit', (e) => {
+  e.preventDefault(); updateOrderTotal();
+  const name = document.getElementById('customerName').value.trim();
+  const phone = document.getElementById('customerPhone').value.trim();
+  const address = document.getElementById('customerAddress').value.trim();
+  const orderType = document.getElementById('orderType').value;
+  const deliveryType = document.getElementById('deliveryType').value;
+  const qty = orderQty.value;
+  const notes = document.getElementById('orderNotes').value.trim();
+  const total = orderTotal.textContent;
+  const message = `Hi Akshar's Cold Coco, I want to place an order.%0A%0AProduct: Plain Cold Coco 1 Litre%0AQuantity: ${encodeURIComponent(qty)}%0AEstimated Total: ${encodeURIComponent(total)}%0AOrder Type: ${encodeURIComponent(orderType)}%0ADelivery/Collection: ${encodeURIComponent(deliveryType)}%0A%0AName: ${encodeURIComponent(name)}%0APhone: ${encodeURIComponent(phone)}%0AAddress: ${encodeURIComponent(address)}%0ANotes: ${encodeURIComponent(notes || '-')}`;
+  window.open(`https://wa.me/447570761611?text=${message}`, '_blank');
+  closeOrderModal();
+});

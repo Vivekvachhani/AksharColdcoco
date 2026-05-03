@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vivekvachhani.github.io/AksharColdcoco/sitemap.xml
